@@ -4,6 +4,7 @@ import { BidsModule } from './bids/bids.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Item } from './items/item.entity';
 import { Bid } from './bids/bid.entity';
+import { AuctionGateway } from './auction/auction.gateway';
 
 @Module({
   imports: [
@@ -21,5 +22,6 @@ import { Bid } from './bids/bid.entity';
     ItemsModule,
     BidsModule,
   ],
+  providers: [AuctionGateway],
 })
 export class AppModule {}
