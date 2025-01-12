@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Bid } from './bid.entity';
 import { Item } from '../items/item.entity';
+import { AuctionGateway } from '../auction/auction.gateway';
 
 @Injectable()
 export class BidsService {
@@ -11,6 +12,7 @@ export class BidsService {
         private bidsRepository: Repository<Bid>,
         @InjectRepository(Item)
         private itemsRepository: Repository<Item>,
+        private auctionGateway: AuctionGateway,
     ) { }
 
     async placeBid(itemId: number, userId: number, bidAmount: number): Promise<Bid> {
@@ -37,6 +39,8 @@ export class BidsService {
 
         item.highestBid = bidAmount;
         await this.itemsRepository.save(item);
+
+        await this.auctionGateway.broadcastAuctionUpdate(itemId);
 
         return this.bidsRepository.save(bid);
     }
