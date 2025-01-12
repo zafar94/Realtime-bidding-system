@@ -12,7 +12,7 @@ export class Item {
 
     @Column()
     description: string;
-‰
+
     @Column('decimal')
     startingPrice: number;
 
