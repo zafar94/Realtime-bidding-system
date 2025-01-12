@@ -1,26 +1,25 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { Item } from './items/item.entity';
-import { Bid } from './entities/bid.entity';
 import { ItemsModule } from './items/items.module';
 import { BidsModule } from './bids/bids.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Item } from './items/item.entity';
+import { Bid } from './bids/bid.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'db',
+      host: 'localhost',
       port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'bidding',
-      entities: [User, Item, Bid],
+      username: 'postgres',
+      password: 'yourpassword',
+      database: 'auction',
+      entities: [Item, Bid],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([User, Item, Bid]),
+
     ItemsModule,
     BidsModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
