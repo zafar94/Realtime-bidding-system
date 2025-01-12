@@ -19,4 +19,7 @@ export class Item {
 
     @Column('float', { default: 0 })
     highestBid: number;
+    
+    @Column('timestamp')
+    createdAt: Date;
 }

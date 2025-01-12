@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 import { Item } from './items/item.entity';
 import { Bid } from './entities/bid.entity';
 import { ItemsModule } from './items/items.module';
+import { BidsModule } from './bids/bids.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ItemsModule } from './items/items.module';
     }),
     TypeOrmModule.forFeature([User, Item, Bid]),
     ItemsModule,
+    BidsModule,
   ],
 })
 export class AppModule { }
