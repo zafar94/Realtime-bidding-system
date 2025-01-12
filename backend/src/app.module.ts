@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Item } from './entities/item.entity';
+import { Item } from './items/item.entity';
 import { Bid } from './entities/bid.entity';
+import { ItemsModule } from './items/items.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Bid } from './entities/bid.entity';
       synchronize: true,
     }),
     TypeOrmModule.forFeature([User, Item, Bid]),
+    ItemsModule,
   ],
 })
 export class AppModule { }
