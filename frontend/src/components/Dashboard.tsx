@@ -13,6 +13,7 @@ type AuctionItem = {
 };
 
 const { Title } = Typography;
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Dashboard: React.FC = () => {
   const [auctions, setAuctions] = useState<AuctionItem[]>([]);
@@ -21,7 +22,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchAuctions = async () => {
       try {
-        const response = await axios.get<AuctionItem[]>('/items');
+        const response = await axios.get<AuctionItem[]>(`${BASE_URL}/items`);
         setAuctions(response.data);
       } catch (error) {
         console.error('Error fetching auctions:', error);
