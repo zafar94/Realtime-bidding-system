@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ItemsModule } from './items/items.module';
 import { BidsModule } from './bids/bids.module';
 import { UsersModule } from './users/users.module';
@@ -8,6 +8,7 @@ import { Bid } from './bids/bid.entity';
 import { User } from './users/user.entity';
 import { AuctionGateway } from './auction/auction.gateway';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppDataSource } from './data-source';
 
 @Module({
   imports: [
@@ -34,4 +35,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ],
   providers: [AuctionGateway],
 })
-export class AppModule { }
+
+export class AppModule implements OnModuleInit {
+  async onModuleInit() {
+    try {
+      await AppDataSource.initialize();
+      console.log('Database connection established');
+    } catch (error) {
+      console.error('Error initializing database connection:', error);
+    }
+  }
+}
