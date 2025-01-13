@@ -14,8 +14,8 @@ export class Item {
     @Column('float')
     startingPrice: number;
 
-    @Column('timestamp')
-    auctionEndTime: Date;
+    @Column()
+    duration: number;
 
     @Column('float', { default: 0 })
     highestBid: number;

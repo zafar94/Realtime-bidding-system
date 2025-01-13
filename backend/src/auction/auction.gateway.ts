@@ -34,7 +34,7 @@ export class AuctionGateway implements OnGatewayConnection, OnGatewayDisconnect 
     const item = await this.itemsService.getItemById(itemId);
     this.server.to(`auction_${itemId}`).emit('auctionUpdate', {
       highestBid: item.highestBid,
-      auctionEndTime: item.auctionEndTime,
+      duration: item.duration,
     });
   }
 }

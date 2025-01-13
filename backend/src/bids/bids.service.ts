@@ -22,7 +22,7 @@ export class BidsService {
             throw new Error('Item not found');
         }
 
-        if (new Date() > item.auctionEndTime) {
+        if (item.duration) {
             throw new Error('Auction has ended');
         }
 

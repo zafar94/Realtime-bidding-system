@@ -14,9 +14,17 @@ export class ItemsService {
         name: string;
         description: string;
         startingPrice: number;
-        auctionEndTime: Date;
+        duration: number;
     }): Promise<Item> {
-        const item = this.itemsRepository.create(itemData);
+        const newItem = {
+            name: itemData.name,
+            description: itemData.description,
+            startingPrice: itemData.startingPrice,
+            duration: itemData.duration,
+            createdAt: new Date(),
+        }
+        const item = this.itemsRepository.create(newItem);
+        console.log('item', item)
         return this.itemsRepository.save(item);
     }
 

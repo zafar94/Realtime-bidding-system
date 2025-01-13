@@ -7,7 +7,8 @@ export class ItemsController {
     constructor(private readonly itemsService: ItemsService) { }
 
     @Post()
-    async createItem(@Body() itemData: { name: string; description: string; startingPrice: number; auctionEndTime: Date }): Promise<Item> {
+    async createItem(@Body() itemData: { name: string; description: string; startingPrice: number; duration: number, createdAt: Date = new Date }): Promise<Item> {
+        console.log('itemData', itemData)
         return this.itemsService.createItem(itemData);
     }
 
