@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Space } from 'antd';
+import { Button, Table, Space, Modal, Input, message } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,6 +24,11 @@ const Dashboard: React.FC = () => {
   const handleCreateAuction = () => {
     navigate('/create-auction');
   };
+
+  const navigatePlaceBid = (id: number) => {
+    navigate('/auction/' + id);
+  };
+
 
   const columns = [
     {
@@ -50,6 +55,16 @@ const Dashboard: React.FC = () => {
       title: 'Time Remaining',
       dataIndex: 'timeRemaining',
       key: 'timeRemaining',
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_: any, record: any) => (
+        console.log(record, 'record'),
+        <Button type="primary" onClick={() => navigatePlaceBid(record.id)}>
+          Place Bid
+        </Button>
+      ),
     },
   ];
 
