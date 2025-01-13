@@ -13,21 +13,20 @@ type AuctionItem = {
     auctionEndTime: string;
 };
 
-type AuctionDetails = AuctionItem & {
-    bids: { userId: number; amount: number }[];
-};
 
 const { Title, Text } = Typography;
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 
 const AuctionDetail: React.FC = () => {
     const { itemId } = useParams<{ itemId: string }>();
-    const [auction, setAuction] = useState<AuctionDetails | null>(null);
+    const [auction, setAuction] = useState<any>(null);
     const [bidAmount, setBidAmount] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchAuctionDetails = async () => {
             try {
-                const response = await axios.get<AuctionDetails>(`/items/${itemId}`);
+                const response = await axios.get(`${BASE_URL}/items/${itemId}`);
                 setAuction(response.data);
             } catch (error) {
                 console.error('Error fetching auction details:', error);
@@ -50,23 +49,23 @@ const AuctionDetail: React.FC = () => {
         }
     };
 
-    if (!auction) return <div>Loading...</div>;
+    // if (!auction) return <div>Loading...</div>;
 
     return (
         <div style={{ padding: '20px' }}>
-            <Title level={2}>{auction.name}</Title>
-            <Text>{auction.description}</Text>
+            <Title level={2}>{auction?.name}</Title>
+            <Text>{auction?.description}</Text>
             <br />
             <Text>
-                <strong>Starting Price:</strong> ${auction.startingPrice}
+                <strong>Starting Price:</strong> ${auction?.startingPrice}
             </Text>
             <br />
             <Text>
-                <strong>Current Highest Bid:</strong> ${auction.highestBid}
+                <strong>Current Highest Bid:</strong> ${auction?.highestBid}
             </Text>
             <br />
             <Text>
-                <strong>Time Left:</strong> {new Date(auction.auctionEndTime) > new Date() ? `${Math.floor((new Date(auction.auctionEndTime).getTime() - new Date().getTime()) / 1000 / 60)} mins` : 'Ended'}
+                <strong>Time Left:</strong> {new Date(auction?.duration) > new Date() ? `${Math.floor((new Date(auction.auctionEndTime).getTime() - new Date().getTime()) / 1000 / 60)} mins` : 'Ended'}
             </Text>
             <br />
             <input
