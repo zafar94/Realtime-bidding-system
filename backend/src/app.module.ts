@@ -10,11 +10,11 @@ import { AuctionGateway } from './auction/auction.gateway';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: 'postgres',
       port: 5432,
-      username: 'postgres',
-      password: 'yourpassword',
-      database: 'auction',
+      username: 'auction_user',
+      password: 'auction_pass',
+      database: 'auction_db',
       entities: [Item, Bid],
       synchronize: true,
     }),
@@ -24,4 +24,4 @@ import { AuctionGateway } from './auction/auction.gateway';
   ],
   providers: [AuctionGateway],
 })
-export class AppModule {}
+export class AppModule { }
