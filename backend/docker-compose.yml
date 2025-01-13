@@ -2,7 +2,7 @@ version: "3.8"
 services:
   backend:
     build:
-      context: ./backend
+      context: ./
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
@@ -14,7 +14,7 @@ services:
     image: postgres:15
     container_name: auction_postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_USER: auction_user
       POSTGRES_PASSWORD: auction_pass
