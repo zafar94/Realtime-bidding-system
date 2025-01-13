@@ -46,7 +46,10 @@ export class BidsService {
     }
 
     async getBidsForItem(itemId: number): Promise<Bid[]> {
-        return this.bidsRepository.find({ where: { itemId }, order: { createdAt: 'DESC' } });
+        return this.bidsRepository.find({
+            where: { item: { id: itemId } },
+            order: { createdAt: 'DESC' },
+        });
     }
 
 
