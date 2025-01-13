@@ -1,14 +1,10 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ItemsModule } from './items/items.module';
 import { BidsModule } from './bids/bids.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Item } from './items/item.entity';
-import { Bid } from './bids/bid.entity';
-import { User } from './users/user.entity';
-import { AuctionGateway } from './auction/auction.gateway';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppDataSource } from './data-source';
+import { AuctionGateway } from './auction/auction.gateway';
 
 @Module({
   imports: [
@@ -24,7 +20,7 @@ import { AppDataSource } from './data-source';
         username: configService.get<string>('DATABASE_USER'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [User, Item, Bid],
+        autoLoadEntities: true,
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -35,14 +31,4 @@ import { AppDataSource } from './data-source';
   ],
   providers: [AuctionGateway],
 })
-
-export class AppModule implements OnModuleInit {
-  async onModuleInit() {
-    try {
-      await AppDataSource.initialize();
-      console.log('Database connection established');
-    } catch (error) {
-      console.error('Error initializing database connection:', error);
-    }
-  }
-}
+export class AppModule { }
