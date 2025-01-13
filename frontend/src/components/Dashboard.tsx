@@ -53,24 +53,13 @@ const Dashboard: React.FC = () => {
     },
   ];
 
-  const data = [
-    {
-      key: '1',
-      name: 'Antique Vase',
-      description: 'A beautiful antique vase.',
-      startingPrice: '$100',
-      highestBid: '$150',
-      timeRemaining: '10 minutes',
-    },
-  ];
-
   return (
     <div style={{ padding: '20px' }}>
       <Space direction="vertical" style={{ width: '100%' }}>
         <Button type="primary" onClick={handleCreateAuction}>
           Create New Auction
         </Button>
-        <Table columns={columns} dataSource={data} />
+        <Table columns={columns} dataSource={auctions} rowKey="id" />
       </Space>
     </div>
   );
