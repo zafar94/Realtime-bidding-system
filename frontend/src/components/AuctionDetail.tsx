@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useParams } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Button, Typography } from 'antd';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
