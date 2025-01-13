@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, InputNumber, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const CreateAuction: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -9,23 +10,17 @@ const CreateAuction: React.FC = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await axios.post('http://localhost:3002/items', values);
 
-      if (response.ok) {
+      if (response.status === 201) {
         message.success('Auction created successfully!');
         navigate('/');
       } else {
-        const error = await response.json();
-        message.error(error.message || 'Failed to create auction');
+        message.error('Failed to create auction');
       }
-    } catch (error) {
-      message.error('Error creating auction');
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Error creating auction';
+      message.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -60,7 +55,6 @@ const CreateAuction: React.FC = () => {
           <InputNumber
             min={1}
             formatter={(value) => `$ ${value}`}
-            // parser={(value) => value?.replace(/\$\s?|(,*)/g, '') || ''}
             style={{ width: '100%' }}
           />
         </Form.Item>
