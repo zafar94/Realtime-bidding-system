@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ItemsModule } from './items/items.module';
 import { BidsModule } from './bids/bids.module';
+import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Item } from './items/item.entity';
 import { Bid } from './bids/bid.entity';
+import { User } from './users/user.entity';
 import { AuctionGateway } from './auction/auction.gateway';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -21,12 +23,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DATABASE_USER'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        entities: [Item, Bid],
+        entities: [User, Item, Bid],
         synchronize: true,
       }),
       inject: [ConfigService],
     }),
-
+    UsersModule,
     ItemsModule,
     BidsModule,
   ],
