@@ -9,7 +9,7 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/auction/:id" element={<AuctionDetail />} />
+        <Route path="/auction/:itemId" element={<AuctionDetail />} />
         <Route path="/create-auction" element={<CreateAuction />} />
       </Routes>
     </Router>
