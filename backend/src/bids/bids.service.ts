@@ -22,10 +22,10 @@ export class BidsService {
             throw new Error('Item not found');
         }
 
-        if (item.duration) {
-            throw new Error('Auction has ended');
-        }
-
+        // if (item.duration) {
+        //     throw new Error('Auction has ended');
+        // }
+        console.log(item, 'item')
         if (bidAmount <= item.highestBid) {
             throw new Error('Bid must be higher than the current highest bid');
         }
