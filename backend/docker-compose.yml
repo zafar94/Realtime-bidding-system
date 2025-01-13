@@ -1,5 +1,15 @@
 version: "3.8"
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://auction_user:auction_pass@postgres:5432/auction_db
   postgres:
     image: postgres:15
     container_name: auction_postgres
