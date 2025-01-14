@@ -16,15 +16,21 @@ export class ItemsService {
         startingPrice: number;
         duration: number;
     }): Promise<Item> {
+        const currentTime = Math.floor(Date.now() / 1000);
+        const endTime = currentTime + itemData.duration * 60;
+
         const newItem = {
             name: itemData.name,
             description: itemData.description,
             startingPrice: itemData.startingPrice,
             duration: itemData.duration,
             createdAt: new Date(),
-        }
+            highestBid: itemData.startingPrice,
+            endTime,
+        };
+
         const item = this.itemsRepository.create(newItem);
-        console.log('item', item)
+        console.log('Created item:', item);
         return this.itemsRepository.save(item);
     }
 
