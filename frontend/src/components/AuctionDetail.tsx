@@ -19,6 +19,25 @@ const AuctionDetail: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
     const [socket, setSocket] = useState<Socket | null>(null);
+    const [remainingTime, setRemainingTime] = useState<string>('Calculating...');
+
+    const calculateRemainingTime = (endTime: number | null) => {
+        if (!endTime) return 'Auction Ended';
+    
+        const currentTime = Date.now();
+        const timeDiff = endTime - currentTime;
+    
+        console.log('Current Time:', new Date(currentTime).toLocaleString());
+        console.log('End Time:', new Date(endTime).toLocaleString());
+        console.log('Time Diff:', timeDiff);
+    
+        if (timeDiff <= 0) return 'Auction Ended';
+    
+        const minutes = Math.floor(timeDiff / 60000);
+        const seconds = Math.floor((timeDiff % 60000) / 1000);
+        
+        return `${minutes} min${minutes !== 1 ? 's' : ''}`;
+    };
 
     useEffect(() => {
         const fetchAuctionDetails = async () => {
@@ -31,9 +50,12 @@ const AuctionDetail: React.FC = () => {
                 setAuction(auctionResponse.data);
                 setUsers(usersResponse.data);
                 setError(null);
+                if (auctionResponse.data?.endTime) {
+                    setRemainingTime(calculateRemainingTime(auctionResponse.data.endTime));
+                }
             } catch (err) {
-                setError('Failed to fetch auction or users details.');
-                message.error('Failed to fetch data.');
+                setError('Failed to fetch auction details.');
+                message.error('Failed to fetch auction details.');
             } finally {
                 setLoading(false);
             }
@@ -49,39 +71,30 @@ const AuctionDetail: React.FC = () => {
         });
 
         socketInstance.on('auctionUpdate', (update: any) => {
-            console.log('Received update:', update);
-            if (update) {
+            console.log('Received real-time update:', update);
+            if (update.itemId === Number(itemId)) {
                 setAuction((prevAuction: any) => ({
                     ...prevAuction,
                     highestBid: update.highestBid,
-                    duration: update.remainingTime,
+                    endTime: update.endTime,
                 }));
+                if (update.endTime) {
+                    setRemainingTime(calculateRemainingTime(update.endTime));
+                }
             }
         });
 
-        return () => {
-            socketInstance.disconnect();
-        };
-    }, [itemId]);
-
-
-    useEffect(() => {
-        if (!auction?.endTime) return;
-
         const interval = setInterval(() => {
-            const currentTime = Math.floor(Date.now() / 1000); // Current UNIX time
-            const remaining = auction.endTime - currentTime;
-
-            if (remaining <= 0) {
-                setAuction((prev: any) => ({ ...prev, duration: 0 }));
-                clearInterval(interval);
-            } else {
-                setAuction((prev: any) => ({ ...prev, duration: remaining }));
+            if (auction?.endTime) {
+                setRemainingTime(calculateRemainingTime(auction.endTime));
             }
         }, 10000);
 
-        return () => clearInterval(interval);
-    }, [auction?.endTime]);
+        return () => {
+            socketInstance.disconnect();
+            clearInterval(interval);
+        };
+    }, [itemId, auction?.endTime]);
 
     const placeBid = async () => {
         if (!bidAmount || !auction || !selectedUserId) {
@@ -145,8 +158,7 @@ const AuctionDetail: React.FC = () => {
                             <strong>Current Highest Bid:</strong> ${auction?.highestBid}
                         </Text>
                         <Text>
-                            <strong>Minutes Left:</strong>{' '}
-                            {auction?.duration > 0 ? `${Math.ceil(auction.duration / 60)} mins` : 'Ended'}
+                            <strong>Time Left:</strong> {remainingTime}
                         </Text>
                     </Space>
                 </div>
@@ -180,6 +192,7 @@ const AuctionDetail: React.FC = () => {
                         style={{
                             backgroundColor: '#1890ff',
                             borderRadius: '8px',
+                            fontWeight: 'bold'
                         }}
                     >
                         Place Bid

@@ -85,6 +85,23 @@ const Dashboard: React.FC = () => {
     const remainingSeconds = seconds % 60;
     return `${minutes}m ${remainingSeconds}s`;
   };
+  const calculateRemainingTime = (endTime: number | null) => {
+    if (!endTime) return 'Auction Ended';
+
+    const currentTime = Date.now();
+    const timeDiff = endTime - currentTime;
+
+    console.log('Current Time:', new Date(currentTime).toLocaleString());
+    console.log('End Time:', new Date(endTime).toLocaleString());
+    console.log('Time Diff:', timeDiff);
+
+    if (timeDiff <= 0) return 'Auction Ended';
+
+    const minutes = Math.floor(timeDiff / 60000);
+    const seconds = Math.floor((timeDiff % 60000) / 1000);
+
+    return `${minutes} min${minutes !== 1 ? 's' : ''}`;
+  };
 
   const columns = [
     {
@@ -118,7 +135,7 @@ const Dashboard: React.FC = () => {
       key: 'duration',
       render: (_: any, record: any) => (
         <span style={{ color: record.duration > 0 ? '#faad14' : '#ff4d4f' }}>
-          {formatDuration(record.duration)}
+          {calculateRemainingTime(record.endTime)}
         </span>
       ),
     },
