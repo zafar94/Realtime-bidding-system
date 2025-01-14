@@ -22,4 +22,7 @@ export class Item {
     
     @Column('timestamp')
     createdAt: Date;
+
+    @Column('bigint')
+    endTime: number;
 }
