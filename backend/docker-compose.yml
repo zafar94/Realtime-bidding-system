@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://auction_user:auction_pass@postgres:5432/auction_db
+  postgres:
+    image: postgres:15
+    container_name: auction_postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: auction_user
+      POSTGRES_PASSWORD: auction_pass
+      POSTGRES_DB: auction_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:
