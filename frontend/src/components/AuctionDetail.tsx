@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Typography, InputNumber, Button, Alert, Space, Spin, message } from 'antd';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { io, Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
@@ -14,6 +15,7 @@ const AuctionDetail: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
         const fetchAuctionDetails = async () => {
@@ -29,10 +31,53 @@ const AuctionDetail: React.FC = () => {
             }
         };
         fetchAuctionDetails();
+
+        const socketInstance = io(BASE_URL);
+        setSocket(socketInstance);
+
+        socketInstance.on('connect', () => {
+            console.log('Connected to WebSocket');
+            socketInstance.emit('joinAuction', { itemId });
+        });
+
+        socketInstance.on('auctionUpdate', (update: any) => {
+            console.log('Received update:', update);
+            if (update.itemId === Number(itemId)) {
+                setAuction((prevAuction: any) => ({
+                    ...prevAuction,
+                    highestBid: update.highestBid,
+                    duration: update.duration,
+                }));
+            }
+        });
+
+        return () => {
+            socketInstance.disconnect();
+        };
     }, [itemId]);
+
+
+    useEffect(() => {
+        if (!auction?.endTime) return;
+
+        const interval = setInterval(() => {
+            const currentTime = Math.floor(Date.now() / 1000); // Current UNIX time
+            const remaining = auction.endTime - currentTime;
+
+            if (remaining <= 0) {
+                setAuction((prev: any) => ({ ...prev, duration: 0 }));
+                clearInterval(interval);
+            } else {
+                setAuction((prev: any) => ({ ...prev, duration: remaining }));
+            }
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [auction?.endTime]);
 
     const placeBid = async () => {
         if (!bidAmount || !auction) return;
+
         try {
             await axios.post(`${BASE_URL}/bids`, {
                 itemId: Number(itemId),
@@ -42,9 +87,9 @@ const AuctionDetail: React.FC = () => {
             setAuction({ ...auction, highestBid: bidAmount });
             setBidAmount(null);
             message.success('Bid placed successfully!');
-            navigate('/');
-        } catch {
-            alert('Error placing bid.');
+            // navigate('/');
+        } catch (error: any) {
+            message.error(error.message);
         }
     };
 
@@ -78,15 +123,8 @@ const AuctionDetail: React.FC = () => {
                             <strong>Current Highest Bid:</strong> ${auction?.highestBid}
                         </Text>
                         <Text>
-                            <strong>Time Left:</strong>{' '}
-                            {new Date(auction?.auctionEndTime) > new Date()
-                                ? `${Math.floor(
-                                    (new Date(auction.auctionEndTime).getTime() -
-                                        new Date().getTime()) /
-                                    1000 /
-                                    60
-                                )} mins`
-                                : 'Ended'}
+                            <strong>Minutes Left:</strong>{' '}
+                            {auction?.duration > 0 ? `${Math.ceil(auction.duration / 60)} mins` : 'Ended'}
                         </Text>
                     </Space>
                 </div>
