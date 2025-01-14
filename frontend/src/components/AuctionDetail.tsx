@@ -122,10 +122,21 @@ const AuctionDetail: React.FC = () => {
 
     return (
         <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-            <Card>
-                <Title level={3}>{auction?.name}</Title>
-                <Text type="secondary">{auction?.description}</Text>
-                <div style={{ margin: '20px 0' }}>
+            <Card
+                bordered={true}
+                style={{
+                    borderRadius: '10px',
+                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+                    background: '#fafafa',
+                }}
+            >
+                <Title level={3} style={{ marginBottom: '10px' }}>
+                    {auction?.name}
+                </Title>
+                <Text type="secondary" style={{ display: 'block', marginBottom: '20px' }}>
+                    {auction?.description}
+                </Text>
+                <div style={{ marginBottom: '20px' }}>
                     <Space direction="vertical" size="small">
                         <Text>
                             <strong>Starting Price:</strong> ${auction?.startingPrice}
@@ -152,7 +163,10 @@ const AuctionDetail: React.FC = () => {
                         ))}
                     </Select>
                     <InputNumber
-                        style={{ width: '100%' }}
+                        style={{
+                            width: '100%',
+                            borderRadius: '8px',
+                        }}
                         min={auction?.highestBid + 1 || auction?.startingPrice || 1}
                         value={bidAmount}
                         onChange={(value) => setBidAmount(value || null)}
@@ -163,6 +177,10 @@ const AuctionDetail: React.FC = () => {
                         onClick={placeBid}
                         disabled={!bidAmount || bidAmount <= auction?.highestBid || !selectedUserId}
                         block
+                        style={{
+                            backgroundColor: '#1890ff',
+                            borderRadius: '8px',
+                        }}
                     >
                         Place Bid
                     </Button>
