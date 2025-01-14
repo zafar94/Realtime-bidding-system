@@ -27,10 +27,6 @@ const AuctionDetail: React.FC = () => {
         const currentTime = Date.now();
         const timeDiff = endTime - currentTime;
     
-        console.log('Current Time:', new Date(currentTime).toLocaleString());
-        console.log('End Time:', new Date(endTime).toLocaleString());
-        console.log('Time Diff:', timeDiff);
-    
         if (timeDiff <= 0) return 'Auction Ended';
     
         const minutes = Math.floor(timeDiff / 60000);
