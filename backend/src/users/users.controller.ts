@@ -3,12 +3,12 @@ import { UsersService } from './users.service';
 import { User } from './user.entity';
 
 @Controller('users')
-export class ItemsController {
+export class UsersController {
     constructor(private readonly userService: UsersService) { }
 
     @Get()
     async getUsers(): Promise<User[]> {
-        return this.userService.getItems();
+        return this.userService.getUsers();
     }
 
 }

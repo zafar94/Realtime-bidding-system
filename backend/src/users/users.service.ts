@@ -10,7 +10,7 @@ export class UsersService {
         private usersRepository: Repository<User>,
     ) { }
 
-    async getItems(): Promise<User[]> {
+    async getUsers(): Promise<User[]> {
         return this.usersRepository.find();
     }
 }
