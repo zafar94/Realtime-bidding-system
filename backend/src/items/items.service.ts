@@ -16,8 +16,8 @@ export class ItemsService {
         startingPrice: number;
         duration: number;
     }): Promise<Item> {
-        const currentTime = Math.floor(Date.now() / 1000);
-        const endTime = currentTime + itemData.duration * 60;
+        const currentTime = Date.now();
+        const endTime = currentTime + itemData.duration * 60 * 1000;
 
         const newItem = {
             name: itemData.name,
