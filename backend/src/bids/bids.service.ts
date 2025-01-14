@@ -22,10 +22,12 @@ export class BidsService {
             throw new Error('Item not found');
         }
 
-        // if (item.duration) {
-        //     throw new Error('Auction has ended');
-        // }
-        console.log(item, 'item')
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (item.endTime < currentTime) {
+            throw new Error('Auction has ended');
+        }
+
         if (bidAmount <= item.highestBid) {
             throw new Error('Bid must be higher than the current highest bid');
         }
@@ -40,7 +42,9 @@ export class BidsService {
         item.highestBid = bidAmount;
         await this.itemsRepository.save(item);
 
-        await this.auctionGateway.broadcastAuctionUpdate(itemId);
+        const remainingDuration = item.endTime - currentTime;
+
+        await this.auctionGateway.sendAuctionUpdate(itemId, item.highestBid, remainingDuration);
 
         return this.bidsRepository.save(bid);
     }
