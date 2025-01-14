@@ -23,15 +23,15 @@ const AuctionDetail: React.FC = () => {
 
     const calculateRemainingTime = (endTime: number | null) => {
         if (!endTime) return 'Auction Ended';
-    
+
         const currentTime = Date.now();
         const timeDiff = endTime - currentTime;
-    
+
         if (timeDiff <= 0) return 'Auction Ended';
-    
+
         const minutes = Math.floor(timeDiff / 60000);
         const seconds = Math.floor((timeDiff % 60000) / 1000);
-        
+
         return `${minutes} min${minutes !== 1 ? 's' : ''}`;
     };
 
@@ -97,6 +97,14 @@ const AuctionDetail: React.FC = () => {
             message.error('Please enter a bid amount and select a user.');
             return;
         }
+        if (auction?.endTime && auction.endTime <= Date.now()) {
+            message.error('The auction has ended. You cannot place a bid.');
+            return;
+        }
+        if (bidAmount <= auction.highestBid) {
+            message.error('Your bid must be higher than the current highest bid.');
+            return;
+        }
 
         try {
             await axios.post(`${BASE_URL}/bids`, {
@@ -107,7 +115,6 @@ const AuctionDetail: React.FC = () => {
             setAuction({ ...auction, highestBid: bidAmount });
             setBidAmount(null);
             message.success('Bid placed successfully!');
-            // navigate('/');
         } catch (error: any) {
             message.error(error.message || 'Error placing bid.');
         }
@@ -175,7 +182,6 @@ const AuctionDetail: React.FC = () => {
                             width: '100%',
                             borderRadius: '8px',
                         }}
-                        min={auction?.highestBid + 1 || auction?.startingPrice || 1}
                         value={bidAmount}
                         onChange={(value) => setBidAmount(value || null)}
                         placeholder="Enter your bid"
@@ -183,7 +189,6 @@ const AuctionDetail: React.FC = () => {
                     <Button
                         type="primary"
                         onClick={placeBid}
-                        disabled={!bidAmount || bidAmount <= auction?.highestBid || !selectedUserId}
                         block
                         style={{
                             backgroundColor: '#1890ff',
