@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Typography, InputNumber, Button, Alert, Space, Spin, message } from 'antd';
+import { Card, Typography, InputNumber, Button, Alert, Space, Spin, Select, message } from 'antd';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
+const { Option } = Select;
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const AuctionDetail: React.FC = () => {
     const { itemId } = useParams<{ itemId: string }>();
     const [auction, setAuction] = useState<any>(null);
     const [bidAmount, setBidAmount] = useState<number | null>(null);
+    const [users, setUsers] = useState<any[]>([]);
+    const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -20,12 +23,17 @@ const AuctionDetail: React.FC = () => {
     useEffect(() => {
         const fetchAuctionDetails = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/items/${itemId}`);
-                setAuction(response.data);
+                const [auctionResponse, usersResponse] = await Promise.all([
+                    axios.get(`${BASE_URL}/items/${itemId}`),
+                    axios.get(`${BASE_URL}/users`)
+                ]);
+
+                setAuction(auctionResponse.data);
+                setUsers(usersResponse.data);
                 setError(null);
             } catch (err) {
-                setError('Failed to fetch auction details.');
-                message.error('Failed to fetch auction details.');
+                setError('Failed to fetch auction or users details.');
+                message.error('Failed to fetch data.');
             } finally {
                 setLoading(false);
             }
@@ -76,12 +84,15 @@ const AuctionDetail: React.FC = () => {
     }, [auction?.endTime]);
 
     const placeBid = async () => {
-        if (!bidAmount || !auction) return;
+        if (!bidAmount || !auction || !selectedUserId) {
+            message.error('Please enter a bid amount and select a user.');
+            return;
+        }
 
         try {
             await axios.post(`${BASE_URL}/bids`, {
                 itemId: Number(itemId),
-                userId: 1,
+                userId: selectedUserId,
                 bidAmount,
             });
             setAuction({ ...auction, highestBid: bidAmount });
@@ -89,7 +100,7 @@ const AuctionDetail: React.FC = () => {
             message.success('Bid placed successfully!');
             // navigate('/');
         } catch (error: any) {
-            message.error(error.message);
+            message.error(error.message || 'Error placing bid.');
         }
     };
 
@@ -129,6 +140,17 @@ const AuctionDetail: React.FC = () => {
                     </Space>
                 </div>
                 <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                    <Select
+                        style={{ width: '100%' }}
+                        placeholder="Select a user"
+                        onChange={(value) => setSelectedUserId(value)}
+                    >
+                        {users.map((user) => (
+                            <Option key={user.id} value={user.id}>
+                                {user.name}
+                            </Option>
+                        ))}
+                    </Select>
                     <InputNumber
                         style={{ width: '100%' }}
                         min={auction?.highestBid + 1 || auction?.startingPrice || 1}
@@ -139,7 +161,7 @@ const AuctionDetail: React.FC = () => {
                     <Button
                         type="primary"
                         onClick={placeBid}
-                        disabled={!bidAmount || bidAmount <= auction?.highestBid}
+                        disabled={!bidAmount || bidAmount <= auction?.highestBid || !selectedUserId}
                         block
                     >
                         Place Bid
