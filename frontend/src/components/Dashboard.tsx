@@ -79,12 +79,6 @@ const Dashboard: React.FC = () => {
     navigate('/auction/' + id);
   };
 
-  const formatDuration = (seconds: number) => {
-    if (seconds <= 0) return 'Ended';
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}m ${remainingSeconds}s`;
-  };
   const calculateRemainingTime = (endTime: number | null) => {
     if (!endTime) return 'Auction Ended';
 
@@ -133,11 +127,23 @@ const Dashboard: React.FC = () => {
     {
       title: 'Time Remaining',
       key: 'duration',
-      render: (_: any, record: any) => (
-        <span style={{ color: record.duration > 0 ? '#faad14' : '#ff4d4f' }}>
-          {calculateRemainingTime(record.endTime)}
-        </span>
-      ),
+      render: (_: any, record: any) => {
+        console.log('Record:', record);
+        const currentTime = Date.now();
+        const endTime = record.endTime;
+        const timeDiff = endTime - currentTime;
+        let color = '#3f8600';
+
+        if (timeDiff <= 0) {
+          color = '#ff4d4f';
+        }
+
+        return (
+          <span style={{ color: color }}>
+            {calculateRemainingTime(endTime)}
+          </span>
+        );
+      },
     },
     {
       title: 'Actions',
@@ -164,7 +170,7 @@ const Dashboard: React.FC = () => {
           dataSource={auctions}
           rowKey="id"
           bordered
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 10 }}
         />
       </Space>
     </div>
