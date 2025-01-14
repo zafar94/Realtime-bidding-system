@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Typography, InputNumber, Button, Alert, Space, Spin } from 'antd';
+import { Card, Typography, InputNumber, Button, Alert, Space, Spin, message } from 'antd';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -12,6 +13,7 @@ const AuctionDetail: React.FC = () => {
     const [bidAmount, setBidAmount] = useState<number | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAuctionDetails = async () => {
@@ -21,6 +23,7 @@ const AuctionDetail: React.FC = () => {
                 setError(null);
             } catch (err) {
                 setError('Failed to fetch auction details.');
+                message.error('Failed to fetch auction details.');
             } finally {
                 setLoading(false);
             }
@@ -38,7 +41,8 @@ const AuctionDetail: React.FC = () => {
             });
             setAuction({ ...auction, highestBid: bidAmount });
             setBidAmount(null);
-            alert('Bid placed successfully!');
+            message.success('Bid placed successfully!');
+            navigate('/');
         } catch {
             alert('Error placing bid.');
         }
