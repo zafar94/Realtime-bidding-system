@@ -3,6 +3,9 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  ConnectedSocket,
+  MessageBody
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -19,14 +22,18 @@ export class AuctionGateway implements OnGatewayConnection, OnGatewayDisconnect 
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  handleJoinAuction(client: Socket, payload: { itemId: number }) {
+  @SubscribeMessage('joinAuction')
+  handleJoinAuction(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { itemId: number },
+  ) {
     const room = `auction-${payload.itemId}`;
     client.join(room);
     console.log(`Client joined room: ${room}`);
   }
 
-  sendAuctionUpdate(itemId: number, highestBid: number, duration: number) {
+  sendAuctionUpdate(itemId: number, highestBid: number, remainingTime: number) {
     const room = `auction-${itemId}`;
-    this.server.to(room).emit('auctionUpdate', { itemId, highestBid, duration });
+    this.server.to(room).emit('auctionUpdate', { highestBid, remainingTime });
   }
 }
