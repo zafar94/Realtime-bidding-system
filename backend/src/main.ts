@@ -10,15 +10,7 @@ async function bootstrap() {
     const port = configService.get<number>('PORT') || 3001;
 
     app.enableCors({
-      origin: (origin, callback) => {
-        const allowedOrigins = ['http://localhost:3002', 'http://example.com'];
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(null, true);
-          // callback(new Error('Not allowed by CORS'));
-        }
-      },
+      origin: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
