@@ -14,7 +14,6 @@ async function bootstrap() {
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
-    app.setGlobalPrefix('api');
     await app.listen(port);
     console.log(`Application is running on: PORT:${port}`);
   } catch (error) {
