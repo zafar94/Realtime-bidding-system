@@ -68,7 +68,7 @@ const AuctionDetail: React.FC = () => {
 
         socketInstance.on('auctionUpdate', (update: any) => {
             console.log('Received real-time update:', update);
-            if (update.itemId === Number(itemId)) {
+            if (update) {
                 setAuction((prevAuction: any) => ({
                     ...prevAuction,
                     highestBid: update.highestBid,
