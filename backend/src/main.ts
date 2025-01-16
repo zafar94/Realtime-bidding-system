@@ -10,7 +10,7 @@ async function bootstrap() {
     const port = configService.get<number>('PORT') || 3001;
 
     app.enableCors({
-      origin: true,
+      origin: ['http://localhost:3003', 'https://realtime-bidding-system-nm29.vercel.app'],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
