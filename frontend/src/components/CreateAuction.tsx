@@ -3,6 +3,8 @@ import { Form, Input, InputNumber, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const CreateAuction: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const CreateAuction: React.FC = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3002/items', values);
+      const response = await axios.post(`${BASE_URL}/items`, values);
 
       if (response.status === 201) {
         message.success('Auction created successfully!');

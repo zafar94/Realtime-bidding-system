@@ -1,0 +1,12 @@
+{
+    "name": "realtime-bidding-app",
+    "private": true,
+    "scripts": {
+        "start": "cd backend && npm run start:prod",
+        "heroku-postbuild": "cd backend && npm install && npx @nestjs/cli build"
+    },
+    "engines": {
+        "node": "20.x",
+        "npm": "8.x"
+    }
+}
