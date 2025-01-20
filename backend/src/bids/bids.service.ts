@@ -46,7 +46,9 @@ export class BidsService {
 
         await this.auctionGateway.sendAuctionUpdate(itemId, item.highestBid, remainingDuration);
 
-        return this.bidsRepository.save(bid);
+        await this.bidsRepository.save(bid);
+
+        return bid;
     }
 
     async getBidsForItem(itemId: number): Promise<Bid[]> {
