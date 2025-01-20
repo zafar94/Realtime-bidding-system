@@ -15,4 +15,13 @@ describe('ItemsService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  describe('ItemsService - Get All Items', () => {
+    it('should return an array of items', async () => {
+      const items = await service.getItems;
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
+    });
+  });
+
 });
