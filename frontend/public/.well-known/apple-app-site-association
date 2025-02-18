@@ -1,0 +1,14 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "9DKQ92967C.com.yellowstoneclub.app",
+                "paths": [
+                    "/events-detail",
+                    "/advertisement-detail"
+                ]
+            }
+        ]
+    }
+}
